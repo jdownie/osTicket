@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ "$1" = "" ]; then
+  echo "Syntax: ./build <ver>"
+  echo "        ./build 1.14.6"
+else
+  grep "^$1\$" releases 2>&1 > /dev/null
+  if [ $? != 0 ]; then
+    echo "$1 is not a recognised osTicket release."
+  else
+    docker tag "osticket:$1" "jdownie/osticket:$1"
+    docker push "jdownie/osticket:$1"
+  fi
+fi

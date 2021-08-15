@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$1" = "" ]; then
+  echo "Syntax: ./build <ver>"
+  echo "        ./build 1.14.6"
+else
+  grep "^$1\$" releases 2>&1 > /dev/null
+  if [ $? != 0 ]; then
+    echo "$1 is not a recognised osTicket release."
+  else
+    docker build --build-arg=OSTICKET_VERSION="$1" -t "osticket:$1" .
+  fi
+fi

@@ -1,0 +1,21 @@
+#!/bin/bash
+if [ "$TZ" != "" ]; then
+  ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+fi
+if [ -f "/app/include/ost-config.php" ]; then
+  chmod -v 0666 "/app/include/ost-config.php"
+  LC="`grep OSTINSTALLED /app/include/ost-config.php | grep "define(" | grep TRUE | wc -l | tr -d ' '`"
+  if [ $LC -ne 0 ]; then
+    rm -Rfv /app/setup
+    chmod -v 0644 "/app/include/ost-config.php"
+  fi
+  ENV="$ENV" DOCKER_HOST="$DOCKER_HOST" apachectl -D FOREGROUND &
+  while true; do
+    echo -n "."
+    php /app/api/cron.php
+    sleep 60
+  done
+else
+  echo "File missing: /app/include/ost-config.php"
+  echo "Did you forget to map your configuration file with docker-run's -v switch?"
+fi

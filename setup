@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo $OSTICKET_VERSION
+
+export CLI_DIR="/src/include/cli/"
+
+/usr/bin/git clone -b v${OSTICKET_VERSION} --depth 1 https://github.com/osTicket/osTicket.git /src
+pushd /src
+ls -l
+/usr/bin/php manage.php deploy -sv /app
+popd
+
